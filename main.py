@@ -1,12 +1,47 @@
 import pandas as pd
 import numpy as np
+from src.data_loader import load_data
 from src.data_generator import generate_data
 from src.features import DataFeatures
 from src.model import CryptoPredictor
 
-# Generating data.
-df = generate_data()
-print(f"Generated {len(df)} days of data. The first 5 rows are displayed here.")
+# Method that asks the user which data source to input for the model/results.
+def get_data_choice():
+    print("\n" + "="*50)
+    print("Select your data source!")
+    print("="*50)
+    print("1. Generate synthetic data")
+    print("2. Use sample dataset (used for README findings)")
+    print("3. Use custom dataset")
+    print("="*50)
+
+    # Returns choice if user has responded correctly.
+    while True:
+        choice = input("Enter your choice (1/2/3): ").strip()
+        if choice in ['1','2','3']:
+            return choice;
+        else:
+            print("Invalid choice. Please enter 1, 2, or 3!")
+
+
+choice = get_data_choice()
+print("="*50)
+
+# Generating data if choice == 1.
+if choice == '1':
+    df = generate_data()
+    print(f"Generated {len(df)} days of data. The first 5 rows are displayed here.")
+
+if choice == '2':
+    df = load_data('sample_data.csv')
+    print(f"Used sample data with {len(df)} days of data. The first 5 rows are displayed here.")
+
+if choice == '3':
+    filename = input("Enter your filename (with '.csv') in data/ folder: ").strip()
+    df = load_data(filename)
+    print(f"Used uploaded custom data with {len(df)} days of data. The first 5 rows are displayed here.")
+
+# Displays the 5 rows.
 print(df.head(5))
 
 # Prepare features on the data.
@@ -35,7 +70,7 @@ results = model.evaluate(
 )
 
 print("\n" + "="*50)
-print("MODEL PERFORMANCE")
+print("PERFORMANCE METRICS of ANIMUS-MERCATUS")
 print("="*50)
 print(f"Direction Accuracy: {results['direction_accuracy']:.3f}")
 print(f"Direction F1 Score: {results['direction_f1']:.3f}")

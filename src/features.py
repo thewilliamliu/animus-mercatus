@@ -6,12 +6,12 @@ class DataFeatures:
     def prepare_features(self, df, n_lags=3):
         df = df.copy() # Defensive copy.
 
-        # Binary classifier to say if the price went up (1) or down (0) tomorrow.
+        # Computes whether the price went up (1) or down (0) the next day.
         df['target_direction'] = (df['return'].shift(-1) > 0).astype(int) 
-        # Regressive classifier to s
+        # Computes volatility for the next day. Details in README.
         df['target_volatility'] = df['return'].shift(-1).abs()
 
-        # Shifting back stuff.
+        # Shifting back stuff. Here we lag by 3 days.
         for lag in range(1, n_lags + 1):
             df[f'return_lag_{lag}'] = df['return'].shift(lag)
             df[f'sentiment_lag_{lag}'] = df['avg_sentiment'].shift(lag)
